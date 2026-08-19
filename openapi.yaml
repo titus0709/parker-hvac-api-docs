@@ -1,0 +1,151 @@
+openapi: 3.0.3
+
+info:
+  title: Parker HVAC API
+  version: 1.0.0
+  description: Parker HVAC appointment scheduling and lead management API.
+
+servers:
+  - url: https://script.google.com/macros/s/AKfycbwao97gig6yVT3WGSj053N_rVB0wlRbFmbvx6UEcJaq8dh9i5rpHJ_MaBvRbYhijLI
+
+paths:
+  /exec:
+    post:
+      operationId: parkerHvac
+      summary: Parker HVAC appointment management
+      description: Use the action field to check availability, book, save a lead, cancel, or reschedule an appointment.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+
+                - title: Check Availability
+                  type: object
+                  required:
+                    - action
+                    - start_time
+                    - end_time
+                  properties:
+                    action:
+                      type: string
+                      enum:
+                        - check_availability
+                    start_time:
+                      type: string
+                      example: "2026-08-21T14:00:00-07:00"
+                    end_time:
+                      type: string
+                      example: "2026-08-21T15:00:00-07:00"
+
+                - title: Book Appointment
+                  type: object
+                  required:
+                    - action
+                    - customer_name
+                    - phone
+                    - service
+                    - start_time
+                    - end_time
+                  properties:
+                    action:
+                      type: string
+                      enum:
+                        - book_appointment
+                    customer_name:
+                      type: string
+                    phone:
+                      type: string
+                    email:
+                      type: string
+                    service:
+                      type: string
+                    start_time:
+                      type: string
+                    end_time:
+                      type: string
+                    notes:
+                      type: string
+
+                - title: Save Lead
+                  type: object
+                  required:
+                    - action
+                    - customer_name
+                    - phone
+                  properties:
+                    action:
+                      type: string
+                      enum:
+                        - save_lead
+                    customer_name:
+                      type: string
+                    phone:
+                      type: string
+                    email:
+                      type: string
+                    service:
+                      type: string
+                    start_time:
+                      type: string
+                    end_time:
+                      type: string
+                    appointment_id:
+                      type: string
+                    status:
+                      type: string
+                    notes:
+                      type: string
+
+                - title: Cancel Appointment
+                  type: object
+                  required:
+                    - action
+                    - appointment_id
+                  properties:
+                    action:
+                      type: string
+                      enum:
+                        - cancel_appointment
+                    appointment_id:
+                      type: string
+
+                - title: Reschedule Appointment
+                  type: object
+                  required:
+                    - action
+                    - appointment_id
+                    - new_start_time
+                    - new_end_time
+                  properties:
+                    action:
+                      type: string
+                      enum:
+                        - reschedule_appointment
+                    appointment_id:
+                      type: string
+                    new_start_time:
+                      type: string
+                    new_end_time:
+                      type: string
+
+      responses:
+        "200":
+          description: Operation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  available:
+                    type: boolean
+                  appointment_id:
+                    type: string
+                  message:
+                    type: string
+                  conflicting_events:
+                    type: integer
